@@ -28,7 +28,11 @@ class CampfireListener extends AbstractIssueEventListener {
 
     @Override
     void workflowEvent(IssueEvent event) {
+      processIssueEvent(event)
+    }
 
+    // This is so testing with return values can be done
+    String processIssueEvent(IssueEvent event){
         def campfireUrl = campfireBaseUrl + "room/" + campfireRoom + "/"
         def campfireSpeakUrl = campfireUrl + speakUrlPath
         def httpClient = new HttpClient()

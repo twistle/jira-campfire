@@ -8,13 +8,18 @@ import static com.atlassian.jira.event.type.EventType.*
  
 class CampfireListenerTest extends GroovyTestCase{
 
- void testPasteToCampfire(){
+ def getCampfireListener(){
    def cfListener = new CampfireListener();
    cfListener.campfireKey=""
-   cfListener.campfireRoom="000000"
-   cfListener.campfireBaseUrl="https://COMAPNY.campfirenow.com/"
-   cfListener.issueBaseUrl="http://jira.COMPANY.com/browse"
-   
+   cfListener.campfireRoom=000000
+   cfListener.campfireBaseUrl="https://COMPANY.campfirenow.com/"
+   cfListener.issueBaseUrl="http://jira.COMPANY.com/"
+   return cfListener;  
+ }
+ 
+ void testIssueCommentToCampfire(){
+   def cfListener = getCampfireListener();
+
    def mIssue = new MockIssue()
    mIssue.key = "MOCK-001"
    mIssue.summary = "Mock Summary"
@@ -34,11 +39,7 @@ class CampfireListenerTest extends GroovyTestCase{
  }
 
  void testIssueCreatedToCampfire(){
-   def cfListener = new CampfireListener();
-   cfListener.campfireKey=""
-   cfListener.campfireRoom="000000"
-   cfListener.campfireBaseUrl="https://COMAPNY.campfirenow.com/"
-   cfListener.issueBaseUrl="http://jira.COMPANY.com/browse"
+   def cfListener = getCampfireListener();
    
    def mIssue = new MockIssue()
    mIssue.key = "MOCK-001"
