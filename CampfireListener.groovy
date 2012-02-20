@@ -1,3 +1,5 @@
+package org.plytro.jira.Listener
+
 import static com.atlassian.jira.event.type.EventType.*
 
 import com.atlassian.jira.event.issue.AbstractIssueEventListener
