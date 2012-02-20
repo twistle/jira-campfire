@@ -52,8 +52,7 @@ class CampfireListener extends AbstractIssueEventListener {
               def msgBody = '{ "message": { "type": "TextMessage", "body": "' + content + '"} }'
               campfirePost(campfireSpeakUrl, msgBody, httpClient)
 
-//              content = String.format("%s", event.comment.body)
-        content = 'new foo bar'
+              content = String.format("%s", event.comment.body)
               msgBody = '{ "message": { "type": "PasteMessage", "body": "' + content + '"} }'
 
               campfirePost(campfireSpeakUrl, msgBody, httpClient)
