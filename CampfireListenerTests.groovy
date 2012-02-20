@@ -6,7 +6,7 @@ import com.atlassian.jira.event.issue.IssueEvent
 
 import static com.atlassian.jira.event.type.EventType.*
  
-class CampfireListenerTest extends GroovyTestCase{
+class CampfireListenerTests extends GroovyTestCase{
 
  def getCampfireListener(){
    def cfListener = new CampfireListener();
