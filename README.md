@@ -7,6 +7,9 @@ Installation
 ------------
 Instructions for installing to follow
 
+Testing
+-------
+
 Misc.
 -----
 Original inspiration: [belchak.com](http://www.belchak.com/2012/01/21/jira-and-campfire-integration/)
