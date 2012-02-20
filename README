@@ -1,2 +1,6 @@
-Originally sourced from http://www.belchak.com/2012/01/21/jira-and-campfire-integration/
+CampfireListener.groovy sends notifcations to a campfire room when events occur within Jira.
 
+Instructions for installing to follow
+
+Original inspiration:
+http://www.belchak.com/2012/01/21/jira-and-campfire-integration/
