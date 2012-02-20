@@ -1,5 +1,3 @@
-Introduction
-------------
 CampfireListener.groovy sends notifcations to a campfire room when events occur
 within Jira.
 
