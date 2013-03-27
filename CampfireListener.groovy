@@ -1,14 +1,14 @@
 /*
 * Copyright (c) 2012 Steve Stodola
 *
-* Permission is hereby granted, free of charge, to any person obtaining a copy 
-* of this software and associated documentation files (the "Software"), to deal 
-* in the Software without restriction, including without limitation the rights 
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 * copies of the Software, and to permit persons to whom the Software is
 * furnished to do so, subject to the following conditions:
 *
-* The above copyright notice and this permission notice shall be included in 
+* The above copyright notice and this permission notice shall be included in
 * all copies or substantial portions of the Software.
 *
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -38,15 +38,15 @@ class CampfireListener extends AbstractIssueEventListener {
     def Category log = Category.getInstance("com.onresolve.jira.groovy.PostFunction")
 
     // Your campfire API key
-    String campfireKey = "YOUR KEY GOES HERE"
-    // The room you want to post to in numeric format 
-    String campfireRoom = "000000"
+    String campfireKey = ""
+    // The room you want to post to in numeric format
+    String campfireRoom = ""
     // The base url for your campfire instance
     // https://COMPANY.campfirenow.com/
-    String campfireBaseUrl = "https://COMPANY.campfirenow.com/"
-    // Jira base url for browsing 
+    String campfireBaseUrl = ""
+    // Jira base url for browsing
     // https://jira.COMPANY.com/browse
-    String issueBaseUrl = "https://jira.COMPANY.com/browse/"
+    String issueBaseUrl = ""
 
     String speakUrlPath = "speak.json"
 
@@ -64,23 +64,48 @@ class CampfireListener extends AbstractIssueEventListener {
         def upc = new UsernamePasswordCredentials(campfireKey, "X")
         httpClient.getState().setCredentials(authScope, upc)
         httpClient.getParams().setAuthenticationPreemptive(true)
-
+        def updateAction = ""
         switch (event.getEventTypeId()) {
+            case ISSUE_RESOLVED_ID:
+              if (!updateAction){
+                updateAction = "resolved"
+              }
+            case ISSUE_UPDATED_ID:
+              if (!updateAction){
+                updateAction = "updated"
+              }
+            case ISSUE_CLOSED_ID:
+              if (!updateAction){
+                updateAction = "closed"
+              }
+            case ISSUE_ASSIGNED_ID:
+              if (!updateAction){
+                updateAction = "assigned"
+              }
+            case ISSUE_REOPENED_ID:
+              if (!updateAction){
+                updateAction = "reopened"
+              }
             case ISSUE_COMMENTED_ID:
-              def content = String.format("%s added a comment to %s (%s%s):",
+              if (!updateAction){
+                updateAction = "added a comment to"
+              }
+
+
+              def content = String.format("%s %s %s (%s%s)",
                               event.user.displayName,
+                              updateAction,
                               event.issue.key,
                               issueBaseUrl,
                               event.issue.key)
 
               def msgBody = '{ "message": { "type": "TextMessage", "body": "' + content + '"} }'
               campfirePost(campfireSpeakUrl, msgBody, httpClient)
-
-              content = String.format("%s", event.comment.body)
-              msgBody = '{ "message": { "type": "PasteMessage", "body": "' + content + '"} }'
-
-              campfirePost(campfireSpeakUrl, msgBody, httpClient)
-
+              if (event.comment != null && event.comment.body != null) {
+                  content = String.format("%s", event.comment.body)
+                  msgBody = '{ "message": { "type": "PasteMessage", "body": "' + content + '"} }'
+                  campfirePost(campfireSpeakUrl, msgBody, httpClient)
+              }
               break
             case ISSUE_CREATED_ID:
               def content = String.format("%s created a new issue: %s (%s%s):",
@@ -93,11 +118,11 @@ class CampfireListener extends AbstractIssueEventListener {
 
               campfirePost(campfireSpeakUrl, msgBody, httpClient)
 
-              content = String.format("%s", event.issue.description)
-              msgBody = '{ "message": { "type": "PasteMessage", "body": "' + content + '"} }'
-
-              campfirePost(campfireSpeakUrl, msgBody, httpClient)
-
+              if (event.issue.description != null) {
+                  content = String.format("%s", event.issue.description)
+                  msgBody = '{ "message": { "type": "PasteMessage", "body": "' + content + '"} }'
+                  campfirePost(campfireSpeakUrl, msgBody, httpClient)
+              }
               break
         }
     }
@@ -106,7 +131,7 @@ class CampfireListener extends AbstractIssueEventListener {
         PostMethod postMethod = new PostMethod(campfireSpeakUrl)
         postMethod.setDoAuthentication(true)
         postMethod.setRequestHeader("Content-Type", "application/json")
-      
+
         postMethod.setRequestBody(content)
         def respCode = httpClient.executeMethod(postMethod)
         def resp = postMethod.getResponseBodyAsString()
